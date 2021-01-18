@@ -1,0 +1,27 @@
+services:
+  database:
+    container_name: postgres_db
+    image: postgres
+    restart: always
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    env_file:
+      - database.env
+    # healthcheck:
+    #   test: ["CMD", "pg_isready"]
+    #   timeout: 5s
+    #   retries: 10
+
+  password-manager:
+    container_name: password-manager
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      database:
+        condition: service_healthy
+
+volumes:
+  postgres-db:
